@@ -35,16 +35,18 @@ spec:
       - description: AntreaAgentConfig holds the configurations for antrea-agent.
         displayName: Antrea Agent Config
         path: antreaAgentConfig
+      - description: AntreaAgentImage is the Docker image name used by antrea-agent.
+        displayName: Antrea Agent Image
+        path: antreaAgentImage
       - description: AntreaCNIConfig holds the configuration of CNI.
         displayName: Antrea CNIConfig
         path: antreaCNIConfig
       - description: AntreaControllerConfig holds the configurations for antrea-controller.
         displayName: Antrea Controller Config
         path: antreaControllerConfig
-      - description: AntreaImage is the Docker image name used by antrea-agent and
-          antrea-controller.
-        displayName: Antrea Image
-        path: antreaImage
+      - description: AntreaControllerImage is the Docker image name used by antrea-controller.
+        displayName: Antrea Controller Image
+        path: antreaControllerImage
       - description: AntreaPlatform is the platform on which antrea will be deployed.
         displayName: Antrea Platform
         path: antreaPlatform

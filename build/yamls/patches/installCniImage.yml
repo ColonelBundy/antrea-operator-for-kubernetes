@@ -8,4 +8,4 @@ spec:
     spec:
       initContainers:
         - name: install-cni
-          image: "{{.AntreaImage}}"
+          image: "{{.AntreaAgentImage}}"

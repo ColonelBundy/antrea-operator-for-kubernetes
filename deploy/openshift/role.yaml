@@ -343,6 +343,13 @@ rules:
 - apiGroups:
   - controlplane.antrea.io
   resources:
+  - networkpolicyevaluation
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - controlplane.antrea.io
+  resources:
   - nodestatssummaries
   verbs:
   - create

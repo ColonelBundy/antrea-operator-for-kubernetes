@@ -26,6 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	"github.com/go-logr/logr"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -118,10 +119,53 @@ func applyConfig(r *AntreaInstallReconciler, config configutil.Config, clusterCo
 
 		// Apply configurations.
 		for _, obj := range objs {
-			if err = apply.ApplyObject(context.TODO(), r.Client, obj, ""); err != nil {
-				log.Error(err, "failed to apply resource")
-				r.Status.SetDegraded(statusmanager.OperatorConfig, "ApplyObjectsError", fmt.Sprintf("Failed to apply operator configurations: %v", err))
-				return reconcile.Result{Requeue: true}, err
+			// Check if the object is a CRD
+			if obj.GetAPIVersion() == apiextensionsv1.SchemeGroupVersion.String() && obj.GetKind() == "CustomResourceDefinition" {
+				// Convert unstructured object to structured CRD
+				desiredCRD := &apiextensionsv1.CustomResourceDefinition{}
+				if err := runtime.DefaultUnstructuredConverter.FromUnstructured(obj.Object, desiredCRD); err != nil {
+					log.Error(err, "Failed to convert unstructured object to CRD", "name", obj.GetName())
+					r.Status.SetDegraded(statusmanager.OperatorConfig, "ApplyObjectsError", fmt.Sprintf("Failed to convert CRD %s: %v", obj.GetName(), err))
+					return reconcile.Result{Requeue: true}, err
+				}
+
+				// Handle CRD replacement
+				existingCRD := &apiextensionsv1.CustomResourceDefinition{}
+				err := r.Client.Default().CRClient().Get(context.TODO(), client.ObjectKey{Name: desiredCRD.Name}, existingCRD)
+				if err != nil && !apierrors.IsNotFound(err) {
+					log.Error(err, "Failed to get existing CRD", "name", desiredCRD.Name)
+					r.Status.SetDegraded(statusmanager.OperatorConfig, "ApplyObjectsError", fmt.Sprintf("Failed to get CRD %s: %v", desiredCRD.Name, err))
+					return reconcile.Result{Requeue: true}, err
+				}
+
+				if apierrors.IsNotFound(err) {
+					// CRD doesn’t exist, create it
+					log.Info("Creating CRD", "name", desiredCRD.Name)
+					if err := r.Client.Default().CRClient().Create(context.TODO(), desiredCRD); err != nil {
+						log.Error(err, "Failed to create CRD", "name", desiredCRD.Name)
+						r.Status.SetDegraded(statusmanager.OperatorConfig, "ApplyObjectsError", fmt.Sprintf("Failed to create CRD %s: %v", desiredCRD.Name, err))
+						return reconcile.Result{Requeue: true}, err
+					}
+				} else {
+					// CRD exists, compare with desired state
+					if !reflect.DeepEqual(desiredCRD.Spec, existingCRD.Spec) {
+						// Specs differ, replace the CRD
+						desiredCRD.ResourceVersion = existingCRD.ResourceVersion // Set ResourceVersion for replace
+						log.Info("Replacing CRD due to spec difference", "name", desiredCRD.Name)
+						if err := r.Client.Default().CRClient().Update(context.TODO(), desiredCRD); err != nil {
+							log.Error(err, "Failed to replace CRD", "name", desiredCRD.Name)
+							r.Status.SetDegraded(statusmanager.OperatorConfig, "ApplyObjectsError", fmt.Sprintf("Failed to replace CRD %s: %v", desiredCRD.Name, err))
+							return reconcile.Result{Requeue: true}, err
+						}
+					}
+				}
+			} else {
+				// Apply non-CRD objects as usual
+				if err = apply.ApplyObject(context.TODO(), r.Client, obj, ""); err != nil {
+					log.Error(err, "failed to apply resource")
+					r.Status.SetDegraded(statusmanager.OperatorConfig, "ApplyObjectsError", fmt.Sprintf("Failed to apply operator configurations: %v", err))
+					return reconcile.Result{Requeue: true}, err
+				}
 			}
 		}
 
@@ -395,12 +439,25 @@ func (r *AntreaInstallReconciler) getAppliedOperConfig() (*operatorv1.AntreaInst
 			return nil, err
 		}
 	}
-	image := antreaControllerDeployment.Spec.Template.Spec.Containers[0].Image
+
+	antreaAgentDaemonset := appsv1.DaemonSet{}
+	if err := crcClient.Get(context.TODO(), types.NamespacedName{Namespace: operatortypes.AntreaNamespace, Name: operatortypes.AntreaAgentDaemonSetName}, &antreaAgentDaemonset); err != nil {
+		if apierrors.IsNotFound(err) {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+
+	controllerImage := antreaControllerDeployment.Spec.Template.Spec.Containers[0].Image
+	agentImage := antreaAgentDaemonset.Spec.Template.Spec.Containers[0].Image
+
 	operConfigSpec := operatorv1.AntreaInstallSpec{
 		AntreaAgentConfig:      antreaConfig.Data[operatortypes.AntreaAgentConfigOption],
 		AntreaCNIConfig:        antreaConfig.Data[operatortypes.AntreaCNIConfigOption],
 		AntreaControllerConfig: antreaConfig.Data[operatortypes.AntreaControllerConfigOption],
-		AntreaImage:            image,
+		AntreaAgentImage:       agentImage,
+		AntreaControllerImage:  controllerImage,
 	}
 	operConfig.Spec = operConfigSpec
 	return operConfig, nil

@@ -143,8 +143,12 @@ func fillConfig(clusterConfig *configv1.Network, operConfig *operatorv1.AntreaIn
 	}
 
 	// Set Antrea image.
-	if operConfig.Spec.AntreaImage == "" {
-		operConfig.Spec.AntreaImage = types.DefaultAntreaImage
+	if operConfig.Spec.AntreaAgentImage == "" {
+		operConfig.Spec.AntreaAgentImage = types.DefaultAntreaAgentImage
+	}
+
+	if operConfig.Spec.AntreaControllerImage == "" {
+		operConfig.Spec.AntreaControllerImage = types.DefaultAntreaControllerImage
 	}
 
 	return nil
@@ -161,8 +165,12 @@ func (c *ConfigK8s) FillConfigs(clusterConfig *configv1.Network, operConfig *ope
 func validateConfig(clusterConfig *configv1.Network, operConfig *operatorv1.AntreaInstall) error {
 	var errs []error
 
-	if operConfig.Spec.AntreaImage == "" {
-		errs = append(errs, fmt.Errorf("antreaImage option can not be empty"))
+	if operConfig.Spec.AntreaAgentImage == "" {
+		errs = append(errs, fmt.Errorf("antreaAgentImage option can not be empty"))
+	}
+
+	if operConfig.Spec.AntreaControllerImage == "" {
+		errs = append(errs, fmt.Errorf("antreaConrollerImage option can not be empty"))
 	}
 
 	antreaAgentConfig := make(map[string]interface{})
@@ -211,7 +219,11 @@ func NeedApplyChange(preConfig, curConfig *operatorv1.AntreaInstall) (agentNeedC
 	if preConfig.Spec.AntreaControllerConfig != curConfig.Spec.AntreaControllerConfig {
 		controllerNeedChange = true
 	}
-	if preConfig.Spec.AntreaImage != curConfig.Spec.AntreaImage {
+	if preConfig.Spec.AntreaControllerImage != curConfig.Spec.AntreaControllerImage {
+		controllerNeedChange = true
+		imageChange = true
+	}
+	if preConfig.Spec.AntreaAgentImage != curConfig.Spec.AntreaAgentImage {
 		agentNeedChange = true
 		controllerNeedChange = true
 		imageChange = true
@@ -326,7 +338,8 @@ func generateRenderData(operatorNetwork *ocoperv1.Network, operConfig *operatorv
 	renderData.Data[types.AntreaAgentConfigRenderKey] = operConfig.Spec.AntreaAgentConfig
 	renderData.Data[types.AntreaCNIConfigRenderKey] = operConfig.Spec.AntreaCNIConfig
 	renderData.Data[types.AntreaControllerConfigRenderKey] = operConfig.Spec.AntreaControllerConfig
-	renderData.Data[types.AntreaImageRenderKey] = operConfig.Spec.AntreaImage
+	renderData.Data[types.AntreaAgentImageRenderKey] = operConfig.Spec.AntreaAgentImage
+	renderData.Data[types.AntreaControllerImageRenderKey] = operConfig.Spec.AntreaControllerImage
 	if operatorNetwork == nil {
 		renderData.Data[types.CNIConfDirRenderKey] = gocni.DefaultNetDir
 		renderData.Data[types.CNIBinDirRenderKey] = gocni.DefaultCNIDir

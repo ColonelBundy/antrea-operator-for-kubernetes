@@ -403,6 +403,7 @@ spec:
       maxAge: 28
       # Compress enables gzip compression on rotated files.
       compress: true
+  antreaAgentImage: antrea/antrea-agent-ubi:v2.0.1
   antreaCNIConfig: |
     {
         "cniVersion":"0.3.0",
@@ -552,6 +553,6 @@ spec:
     multicluster:
       # Enable Multi-cluster NetworkPolicy.
       enableStretchedNetworkPolicy: false
-  antreaImage: antrea/antrea-ubi:v1.15.2
+  antreaControllerImage: antrea/antrea-controller-ubi:v2.0.1
   antreaPlatform: openshift
 

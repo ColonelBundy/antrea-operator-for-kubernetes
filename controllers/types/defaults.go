@@ -4,7 +4,8 @@
 package types
 
 const (
-	DefaultAntreaImage     = "antrea/antrea-ubi:latest"
-	DefaultManifestDir     = "antrea-manifest"
-	DefaultMTU         int = 1450
+	DefaultAntreaAgentImage          = "antrea/antrea-agent-ubi:latest"
+	DefaultAntreaControllerImage     = "antrea/antrea-controller-ubi:latest"
+	DefaultManifestDir               = "antrea-manifest"
+	DefaultMTU                   int = 1450
 )

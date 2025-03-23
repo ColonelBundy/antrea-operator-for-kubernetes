@@ -312,20 +312,8 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: antrea
-    served-by: antrea-controller
   name: clustergroups.crd.antrea.io
 spec:
-  conversion:
-    strategy: Webhook
-    webhook:
-      clientConfig:
-        service:
-          name: antrea
-          namespace: kube-system
-          path: /convert/clustergroup
-      conversionReviewVersions:
-      - v1
-      - v1beta1
   group: crd.antrea.io
   names:
     kind: ClusterGroup
@@ -335,244 +323,6 @@ spec:
     singular: clustergroup
   scope: Cluster
   versions:
-  - name: v1alpha2
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              childGroups:
-                items:
-                  type: string
-                type: array
-              externalEntitySelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              ipBlock:
-                properties:
-                  cidr:
-                    format: cidr
-                    type: string
-                type: object
-              ipBlocks:
-                items:
-                  properties:
-                    cidr:
-                      format: cidr
-                      type: string
-                  type: object
-                type: array
-              namespaceSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              podSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              serviceReference:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                type: object
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-            type: object
-        type: object
-    served: true
-    storage: false
-  - name: v1alpha3
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              childGroups:
-                items:
-                  type: string
-                type: array
-              externalEntitySelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              ipBlocks:
-                items:
-                  properties:
-                    cidr:
-                      format: cidr
-                      type: string
-                  type: object
-                type: array
-              namespaceSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              podSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              serviceReference:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                type: object
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-            type: object
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - name: v1beta1
     schema:
       openAPIV3Schema:
@@ -716,735 +466,6 @@ spec:
     singular: clusternetworkpolicy
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - description: The Tier to which this ClusterNetworkPolicy belongs to.
-      jsonPath: .spec.tier
-      name: Tier
-      type: string
-    - description: The Priority of this ClusterNetworkPolicy relative to other policies.
-      format: float
-      jsonPath: .spec.priority
-      name: Priority
-      type: number
-    - description: The total number of Nodes that should realize the NetworkPolicy.
-      format: int32
-      jsonPath: .status.desiredNodesRealized
-      name: Desired Nodes
-      type: number
-    - description: The number of Nodes that have realized the NetworkPolicy.
-      format: int32
-      jsonPath: .status.currentNodesRealized
-      name: Current Nodes
-      type: number
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              appliedTo:
-                items:
-                  properties:
-                    group:
-                      type: string
-                    namespaceSelector:
-                      properties:
-                        matchExpressions:
-                          items:
-                            properties:
-                              key:
-                                type: string
-                              operator:
-                                enum:
-                                - In
-                                - NotIn
-                                - Exists
-                                - DoesNotExist
-                                type: string
-                              values:
-                                items:
-                                  pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                  type: string
-                                type: array
-                            type: object
-                          type: array
-                        matchLabels:
-                          x-kubernetes-preserve-unknown-fields: true
-                      type: object
-                    podSelector:
-                      properties:
-                        matchExpressions:
-                          items:
-                            properties:
-                              key:
-                                type: string
-                              operator:
-                                enum:
-                                - In
-                                - NotIn
-                                - Exists
-                                - DoesNotExist
-                                type: string
-                              values:
-                                items:
-                                  pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                  type: string
-                                type: array
-                            type: object
-                          type: array
-                        matchLabels:
-                          x-kubernetes-preserve-unknown-fields: true
-                      type: object
-                    service:
-                      properties:
-                        name:
-                          type: string
-                        namespace:
-                          type: string
-                      required:
-                      - name
-                      - namespace
-                      type: object
-                    serviceAccount:
-                      properties:
-                        name:
-                          type: string
-                        namespace:
-                          type: string
-                      required:
-                      - name
-                      - namespace
-                      type: object
-                  type: object
-                type: array
-              egress:
-                items:
-                  properties:
-                    action:
-                      enum:
-                      - Allow
-                      - Drop
-                      - Reject
-                      - Pass
-                      type: string
-                    appliedTo:
-                      items:
-                        properties:
-                          group:
-                            type: string
-                          namespaceSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          serviceAccount:
-                            properties:
-                              name:
-                                type: string
-                              namespace:
-                                type: string
-                            required:
-                            - name
-                            - namespace
-                            type: object
-                        type: object
-                      type: array
-                    enableLogging:
-                      type: boolean
-                    l7Protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - http
-                        - required:
-                          - tls
-                        properties:
-                          http:
-                            properties:
-                              host:
-                                type: string
-                              method:
-                                enum:
-                                - GET
-                                - POST
-                                - PUT
-                                - HEAD
-                                - DELETE
-                                - TRACE
-                                - OPTIONS
-                                - CONNECT
-                                - PATCH
-                                type: string
-                              path:
-                                type: string
-                            type: object
-                          tls:
-                            properties:
-                              sni:
-                                type: string
-                            type: object
-                        type: object
-                      type: array
-                    logLabel:
-                      pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9])?$
-                      type: string
-                    name:
-                      type: string
-                    ports:
-                      items:
-                        properties:
-                          endPort:
-                            type: integer
-                          port:
-                            x-kubernetes-int-or-string: true
-                          protocol:
-                            enum:
-                            - TCP
-                            - UDP
-                            - SCTP
-                            type: string
-                          sourceEndPort:
-                            type: integer
-                          sourcePort:
-                            type: integer
-                        type: object
-                      type: array
-                    protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - icmp
-                        - required:
-                          - igmp
-                        properties:
-                          icmp:
-                            properties:
-                              icmpCode:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                              icmpType:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                            type: object
-                          igmp:
-                            properties:
-                              groupAddress:
-                                oneOf:
-                                - format: ipv4
-                                - format: ipv6
-                                type: string
-                              igmpType:
-                                enum:
-                                - 18
-                                - 22
-                                - 34
-                                type: integer
-                            type: object
-                        type: object
-                      type: array
-                    to:
-                      items:
-                        properties:
-                          fqdn:
-                            type: string
-                          group:
-                            type: string
-                          ipBlock:
-                            properties:
-                              cidr:
-                                format: cidr
-                                type: string
-                            type: object
-                          namespaceSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          namespaces:
-                            properties:
-                              match:
-                                enum:
-                                - Self
-                                type: string
-                            type: object
-                          nodeSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          serviceAccount:
-                            properties:
-                              name:
-                                type: string
-                              namespace:
-                                type: string
-                            required:
-                            - name
-                            - namespace
-                            type: object
-                        type: object
-                      type: array
-                    toServices:
-                      items:
-                        properties:
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          scope:
-                            enum:
-                            - Cluster
-                            - ClusterSet
-                            type: string
-                        required:
-                        - name
-                        - namespace
-                        type: object
-                      type: array
-                  required:
-                  - action
-                  type: object
-                type: array
-              ingress:
-                items:
-                  properties:
-                    action:
-                      enum:
-                      - Allow
-                      - Drop
-                      - Reject
-                      - Pass
-                      type: string
-                    appliedTo:
-                      items:
-                        properties:
-                          group:
-                            type: string
-                          namespaceSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          service:
-                            properties:
-                              name:
-                                type: string
-                              namespace:
-                                type: string
-                            required:
-                            - name
-                            - namespace
-                            type: object
-                          serviceAccount:
-                            properties:
-                              name:
-                                type: string
-                              namespace:
-                                type: string
-                            required:
-                            - name
-                            - namespace
-                            type: object
-                        type: object
-                      type: array
-                    enableLogging:
-                      type: boolean
-                    from:
-                      items:
-                        properties:
-                          group:
-                            type: string
-                          ipBlock:
-                            properties:
-                              cidr:
-                                format: cidr
-                                type: string
-                            type: object
-                          namespaceSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          namespaces:
-                            properties:
-                              match:
-                                enum:
-                                - Self
-                                type: string
-                            type: object
-                          nodeSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          scope:
-                            enum:
-                            - Cluster
-                            - ClusterSet
-                            type: string
-                          serviceAccount:
-                            properties:
-                              name:
-                                type: string
-                              namespace:
-                                type: string
-                            required:
-                            - name
-                            - namespace
-                            type: object
-                        type: object
-                      type: array
-                    l7Protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - http
-                        - required:
-                          - tls
-                        properties:
-                          http:
-                            properties:
-                              host:
-                                type: string
-                              method:
-                                enum:
-                                - GET
-                                - POST
-                                - PUT
-                                - HEAD
-                                - DELETE
-                                - TRACE
-                                - OPTIONS
-                                - CONNECT
-                                - PATCH
-                                type: string
-                              path:
-                                type: string
-                            type: object
-                          tls:
-                            properties:
-                              sni:
-                                type: string
-                            type: object
-                        type: object
-                      type: array
-                    logLabel:
-                      pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9])?$
-                      type: string
-                    name:
-                      type: string
-                    ports:
-                      items:
-                        properties:
-                          endPort:
-                            type: integer
-                          port:
-                            x-kubernetes-int-or-string: true
-                          protocol:
-                            enum:
-                            - TCP
-                            - UDP
-                            - SCTP
-                            type: string
-                          sourceEndPort:
-                            type: integer
-                          sourcePort:
-                            type: integer
-                        type: object
-                      type: array
-                    protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - icmp
-                        - required:
-                          - igmp
-                        properties:
-                          icmp:
-                            properties:
-                              icmpCode:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                              icmpType:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                            type: object
-                          igmp:
-                            properties:
-                              groupAddress:
-                                oneOf:
-                                - format: ipv4
-                                - format: ipv6
-                                type: string
-                              igmpType:
-                                enum:
-                                - 17
-                                type: integer
-                            type: object
-                        type: object
-                      type: array
-                  required:
-                  - action
-                  type: object
-                type: array
-              priority:
-                format: float
-                maximum: 10000
-                minimum: 1
-                type: number
-              tier:
-                type: string
-            required:
-            - priority
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      type: string
-                    message:
-                      type: string
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-              currentNodesRealized:
-                type: integer
-              desiredNodesRealized:
-                type: integer
-              observedGeneration:
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - additionalPrinterColumns:
     - description: The Tier to which this ClusterNetworkPolicy belongs to.
       jsonPath: .spec.tier
@@ -1799,11 +820,17 @@ spec:
                                 type: object
                             type: object
                           namespaces:
+                            maxProperties: 1
+                            minProperties: 1
                             properties:
                               match:
                                 enum:
                                 - Self
                                 type: string
+                              sameLabels:
+                                items:
+                                  type: string
+                                type: array
                             type: object
                           nodeSelector:
                             properties:
@@ -2024,11 +1051,17 @@ spec:
                                 type: object
                             type: object
                           namespaces:
+                            maxProperties: 1
+                            minProperties: 1
                             properties:
                               match:
                                 enum:
                                 - Self
                                 type: string
+                              sameLabels:
+                                items:
+                                  type: string
+                                type: array
                             type: object
                           nodeSelector:
                             properties:
@@ -2266,137 +1299,6 @@ spec:
       jsonPath: .status.egressNode
       name: Node
       type: string
-    name: v1alpha2
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            oneOf:
-            - anyOf:
-              - required:
-                - egressIP
-              - required:
-                - externalIPPool
-            - anyOf:
-              - required:
-                - egressIPs
-              - required:
-                - externalIPPools
-            properties:
-              appliedTo:
-                properties:
-                  namespaceSelector:
-                    properties:
-                      matchExpressions:
-                        items:
-                          properties:
-                            key:
-                              type: string
-                            operator:
-                              enum:
-                              - In
-                              - NotIn
-                              - Exists
-                              - DoesNotExist
-                              type: string
-                            values:
-                              items:
-                                pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                type: string
-                              type: array
-                          type: object
-                        type: array
-                      matchLabels:
-                        x-kubernetes-preserve-unknown-fields: true
-                    type: object
-                  podSelector:
-                    properties:
-                      matchExpressions:
-                        items:
-                          properties:
-                            key:
-                              type: string
-                            operator:
-                              enum:
-                              - In
-                              - NotIn
-                              - Exists
-                              - DoesNotExist
-                              type: string
-                            values:
-                              items:
-                                pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                type: string
-                              type: array
-                          type: object
-                        type: array
-                      matchLabels:
-                        x-kubernetes-preserve-unknown-fields: true
-                    type: object
-                type: object
-              egressIP:
-                oneOf:
-                - format: ipv4
-                - format: ipv6
-                type: string
-              egressIPs:
-                items:
-                  oneOf:
-                  - maxLength: 0
-                  - format: ipv4
-                  - format: ipv6
-                  type: string
-                type: array
-              externalIPPool:
-                type: string
-              externalIPPools:
-                items:
-                  type: string
-                type: array
-            required:
-            - appliedTo
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      type: string
-                    message:
-                      type: string
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-              egressIP:
-                type: string
-              egressNode:
-                type: string
-            type: object
-        required:
-        - spec
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
-  - additionalPrinterColumns:
-    - description: The effective SNAT IP address for the selected workloads.
-      jsonPath: .status.egressIP
-      name: EgressIP
-      type: string
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    - description: The Owner Node of egress IP
-      jsonPath: .status.egressNode
-      name: Node
-      type: string
     name: v1beta1
     schema:
       openAPIV3Schema:
@@ -2588,12 +1490,6 @@ spec:
         type: object
     served: true
     storage: true
-  - name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        type: object
-    served: false
-    storage: false
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -2611,93 +1507,6 @@ spec:
     singular: externalippool
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - description: The number of total IPs
-      jsonPath: .status.usage.total
-      name: Total
-      type: integer
-    - description: The number of allocated IPs
-      jsonPath: .status.usage.used
-      name: Used
-      type: integer
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha2
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              ipRanges:
-                items:
-                  oneOf:
-                  - required:
-                    - cidr
-                  - required:
-                    - start
-                    - end
-                  properties:
-                    cidr:
-                      format: cidr
-                      type: string
-                    end:
-                      oneOf:
-                      - format: ipv4
-                      - format: ipv6
-                      type: string
-                    start:
-                      oneOf:
-                      - format: ipv4
-                      - format: ipv6
-                      type: string
-                  type: object
-                type: array
-              nodeSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-            required:
-            - ipRanges
-            - nodeSelector
-            type: object
-          status:
-            properties:
-              usage:
-                properties:
-                  total:
-                    type: integer
-                  used:
-                    type: integer
-                type: object
-            type: object
-        required:
-        - spec
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - additionalPrinterColumns:
     - description: The number of total IPs
       jsonPath: .status.usage.total
@@ -2872,120 +1681,6 @@ spec:
     singular: group
   scope: Namespaced
   versions:
-  - name: v1alpha3
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              childGroups:
-                items:
-                  type: string
-                type: array
-              externalEntitySelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              ipBlocks:
-                items:
-                  properties:
-                    cidr:
-                      format: cidr
-                      type: string
-                  type: object
-                type: array
-              namespaceSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              podSelector:
-                properties:
-                  matchExpressions:
-                    items:
-                      properties:
-                        key:
-                          type: string
-                        operator:
-                          enum:
-                          - In
-                          - NotIn
-                          - Exists
-                          - DoesNotExist
-                          type: string
-                        values:
-                          items:
-                            type: string
-                          type: array
-                      type: object
-                    type: array
-                  matchLabels:
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
-              serviceReference:
-                properties:
-                  name:
-                    type: string
-                  namespace:
-                    type: string
-                type: object
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-            type: object
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - name: v1beta1
     schema:
       openAPIV3Schema:
@@ -3106,8 +1801,20 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     app: antrea
+    served-by: antrea-controller
   name: ippools.crd.antrea.io
 spec:
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          name: antrea
+          namespace: kube-system
+          path: /convert/ippool
+      conversionReviewVersions:
+      - v1
+      - v1beta1
   group: crd.antrea.io
   names:
     kind: IPPool
@@ -3129,6 +1836,9 @@ spec:
     - jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
+    deprecated: true
+    deprecationWarning: crd.antrea.io/v1alpha2 IPPool is deprecated; use crd.antrea.io/v1beta1
+      IPPool
     name: v1alpha2
     schema:
       openAPIV3Schema:
@@ -3231,6 +1941,120 @@ spec:
         - spec
         type: object
     served: true
+    storage: false
+    subresources:
+      status: {}
+  - additionalPrinterColumns:
+    - description: The number of total IPs
+      jsonPath: .status.usage.total
+      name: Total
+      type: integer
+    - description: The number of allocated IPs
+      jsonPath: .status.usage.used
+      name: Used
+      type: integer
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              ipRanges:
+                items:
+                  oneOf:
+                  - required:
+                    - cidr
+                  - required:
+                    - start
+                    - end
+                  properties:
+                    cidr:
+                      format: cidr
+                      type: string
+                    end:
+                      oneOf:
+                      - format: ipv4
+                      - format: ipv6
+                      type: string
+                    start:
+                      oneOf:
+                      - format: ipv4
+                      - format: ipv6
+                      type: string
+                  type: object
+                type: array
+              subnetInfo:
+                properties:
+                  gateway:
+                    oneOf:
+                    - format: ipv4
+                    - format: ipv6
+                    type: string
+                  prefixLength:
+                    maximum: 127
+                    minimum: 1
+                    type: integer
+                  vlan:
+                    maximum: 4094
+                    minimum: 0
+                    type: integer
+                required:
+                - gateway
+                - prefixLength
+                type: object
+            required:
+            - ipRanges
+            - subnetInfo
+            type: object
+          status:
+            properties:
+              ipAddresses:
+                items:
+                  properties:
+                    ipAddress:
+                      type: string
+                    owner:
+                      properties:
+                        pod:
+                          properties:
+                            containerID:
+                              type: string
+                            ifName:
+                              type: string
+                            name:
+                              type: string
+                            namespace:
+                              type: string
+                          type: object
+                        statefulSet:
+                          properties:
+                            index:
+                              type: integer
+                            name:
+                              type: string
+                            namespace:
+                              type: string
+                          type: object
+                      type: object
+                    phase:
+                      type: string
+                  type: object
+                type: array
+              usage:
+                properties:
+                  total:
+                    type: integer
+                  used:
+                    type: integer
+                type: object
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
     storage: true
     subresources:
       status: {}
@@ -3252,647 +2076,6 @@ spec:
     singular: networkpolicy
   scope: Namespaced
   versions:
-  - additionalPrinterColumns:
-    - description: The Tier to which this Antrea NetworkPolicy belongs to.
-      jsonPath: .spec.tier
-      name: Tier
-      type: string
-    - description: The Priority of this Antrea NetworkPolicy relative to other policies.
-      format: float
-      jsonPath: .spec.priority
-      name: Priority
-      type: number
-    - description: The total number of Nodes that should realize the NetworkPolicy.
-      format: int32
-      jsonPath: .status.desiredNodesRealized
-      name: Desired Nodes
-      type: number
-    - description: The number of Nodes that have realized the NetworkPolicy.
-      format: int32
-      jsonPath: .status.currentNodesRealized
-      name: Current Nodes
-      type: number
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              appliedTo:
-                items:
-                  properties:
-                    externalEntitySelector:
-                      properties:
-                        matchExpressions:
-                          items:
-                            properties:
-                              key:
-                                type: string
-                              operator:
-                                enum:
-                                - In
-                                - NotIn
-                                - Exists
-                                - DoesNotExist
-                                type: string
-                              values:
-                                items:
-                                  pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                  type: string
-                                type: array
-                            type: object
-                          type: array
-                        matchLabels:
-                          x-kubernetes-preserve-unknown-fields: true
-                      type: object
-                    group:
-                      type: string
-                    podSelector:
-                      properties:
-                        matchExpressions:
-                          items:
-                            properties:
-                              key:
-                                type: string
-                              operator:
-                                enum:
-                                - In
-                                - NotIn
-                                - Exists
-                                - DoesNotExist
-                                type: string
-                              values:
-                                items:
-                                  pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                  type: string
-                                type: array
-                            type: object
-                          type: array
-                        matchLabels:
-                          x-kubernetes-preserve-unknown-fields: true
-                      type: object
-                  type: object
-                type: array
-              egress:
-                items:
-                  properties:
-                    action:
-                      enum:
-                      - Allow
-                      - Drop
-                      - Reject
-                      - Pass
-                      type: string
-                    appliedTo:
-                      items:
-                        properties:
-                          group:
-                            type: string
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                        type: object
-                      type: array
-                    enableLogging:
-                      type: boolean
-                    l7Protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - http
-                        - required:
-                          - tls
-                        properties:
-                          http:
-                            properties:
-                              host:
-                                type: string
-                              method:
-                                enum:
-                                - GET
-                                - POST
-                                - PUT
-                                - HEAD
-                                - DELETE
-                                - TRACE
-                                - OPTIONS
-                                - CONNECT
-                                - PATCH
-                                type: string
-                              path:
-                                type: string
-                            type: object
-                          tls:
-                            properties:
-                              sni:
-                                type: string
-                            type: object
-                        type: object
-                      type: array
-                    logLabel:
-                      pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9])?$
-                      type: string
-                    name:
-                      type: string
-                    ports:
-                      items:
-                        properties:
-                          endPort:
-                            type: integer
-                          port:
-                            x-kubernetes-int-or-string: true
-                          protocol:
-                            enum:
-                            - TCP
-                            - UDP
-                            - SCTP
-                            type: string
-                          sourceEndPort:
-                            type: integer
-                          sourcePort:
-                            type: integer
-                        type: object
-                      type: array
-                    protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - icmp
-                        - required:
-                          - igmp
-                        properties:
-                          icmp:
-                            properties:
-                              icmpCode:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                              icmpType:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                            type: object
-                          igmp:
-                            properties:
-                              groupAddress:
-                                oneOf:
-                                - format: ipv4
-                                - format: ipv6
-                                type: string
-                              igmpType:
-                                enum:
-                                - 18
-                                - 22
-                                - 34
-                                type: integer
-                            type: object
-                        type: object
-                      type: array
-                    to:
-                      items:
-                        properties:
-                          externalEntitySelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          fqdn:
-                            type: string
-                          group:
-                            type: string
-                          ipBlock:
-                            properties:
-                              cidr:
-                                format: cidr
-                                type: string
-                            type: object
-                          namespaceSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          nodeSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                        type: object
-                      type: array
-                    toServices:
-                      items:
-                        properties:
-                          name:
-                            type: string
-                          namespace:
-                            type: string
-                          scope:
-                            type: string
-                        required:
-                        - name
-                        type: object
-                      type: array
-                  required:
-                  - action
-                  type: object
-                type: array
-              ingress:
-                items:
-                  properties:
-                    action:
-                      enum:
-                      - Allow
-                      - Drop
-                      - Reject
-                      - Pass
-                      type: string
-                    appliedTo:
-                      items:
-                        properties:
-                          group:
-                            type: string
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                        type: object
-                      type: array
-                    enableLogging:
-                      type: boolean
-                    from:
-                      items:
-                        properties:
-                          externalEntitySelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          group:
-                            type: string
-                          ipBlock:
-                            properties:
-                              cidr:
-                                format: cidr
-                                type: string
-                            type: object
-                          namespaceSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          nodeSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          podSelector:
-                            properties:
-                              matchExpressions:
-                                items:
-                                  properties:
-                                    key:
-                                      type: string
-                                    operator:
-                                      enum:
-                                      - In
-                                      - NotIn
-                                      - Exists
-                                      - DoesNotExist
-                                      type: string
-                                    values:
-                                      items:
-                                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
-                                        type: string
-                                      type: array
-                                  type: object
-                                type: array
-                              matchLabels:
-                                x-kubernetes-preserve-unknown-fields: true
-                            type: object
-                          scope:
-                            enum:
-                            - Cluster
-                            - ClusterSet
-                            type: string
-                        type: object
-                      type: array
-                    l7Protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - http
-                        - required:
-                          - tls
-                        properties:
-                          http:
-                            properties:
-                              host:
-                                type: string
-                              method:
-                                enum:
-                                - GET
-                                - POST
-                                - PUT
-                                - HEAD
-                                - DELETE
-                                - TRACE
-                                - OPTIONS
-                                - CONNECT
-                                - PATCH
-                                type: string
-                              path:
-                                type: string
-                            type: object
-                          tls:
-                            properties:
-                              sni:
-                                type: string
-                            type: object
-                        type: object
-                      type: array
-                    logLabel:
-                      pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9])?$
-                      type: string
-                    name:
-                      type: string
-                    ports:
-                      items:
-                        properties:
-                          endPort:
-                            type: integer
-                          port:
-                            x-kubernetes-int-or-string: true
-                          protocol:
-                            enum:
-                            - TCP
-                            - UDP
-                            - SCTP
-                            type: string
-                          sourceEndPort:
-                            type: integer
-                          sourcePort:
-                            type: integer
-                        type: object
-                      type: array
-                    protocols:
-                      items:
-                        oneOf:
-                        - required:
-                          - icmp
-                        - required:
-                          - igmp
-                        properties:
-                          icmp:
-                            properties:
-                              icmpCode:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                              icmpType:
-                                maximum: 255
-                                minimum: 0
-                                type: integer
-                            type: object
-                          igmp:
-                            properties:
-                              groupAddress:
-                                oneOf:
-                                - format: ipv4
-                                - format: ipv6
-                                type: string
-                              igmpType:
-                                enum:
-                                - 17
-                                type: integer
-                            type: object
-                        type: object
-                      type: array
-                  required:
-                  - action
-                  type: object
-                type: array
-              priority:
-                format: float
-                maximum: 10000
-                minimum: 1
-                type: number
-              tier:
-                type: string
-            required:
-            - priority
-            type: object
-          status:
-            properties:
-              conditions:
-                items:
-                  properties:
-                    lastTransitionTime:
-                      type: string
-                    message:
-                      type: string
-                    reason:
-                      type: string
-                    status:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type: array
-              currentNodesRealized:
-                type: integer
-              desiredNodesRealized:
-                type: integer
-              observedGeneration:
-                type: integer
-              phase:
-                type: string
-            type: object
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - additionalPrinterColumns:
     - description: The Tier to which this Antrea NetworkPolicy belongs to.
       jsonPath: .spec.tier
@@ -4745,32 +2928,6 @@ spec:
     - jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              description:
-                type: string
-              priority:
-                maximum: 255
-                minimum: 0
-                type: integer
-            required:
-            - priority
-            type: object
-        type: object
-    served: true
-    storage: false
-  - additionalPrinterColumns:
-    - description: The Priority of this Tier relative to other Tiers.
-      jsonPath: .spec.priority
-      name: Priority
-      type: integer
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
     name: v1beta1
     schema:
       openAPIV3Schema:
@@ -4806,245 +2963,6 @@ spec:
     singular: traceflow
   scope: Cluster
   versions:
-  - additionalPrinterColumns:
-    - description: The phase of the Traceflow.
-      jsonPath: .status.phase
-      name: Phase
-      type: string
-    - description: The name of the source Pod.
-      jsonPath: .spec.source.pod
-      name: Source-Pod
-      priority: 10
-      type: string
-    - description: The name of the destination Pod.
-      jsonPath: .spec.destination.pod
-      name: Destination-Pod
-      priority: 10
-      type: string
-    - description: The IP address of the destination.
-      jsonPath: .spec.destination.ip
-      name: Destination-IP
-      priority: 10
-      type: string
-    - description: Trace live traffic.
-      jsonPath: .spec.liveTraffic
-      name: Live-Traffic
-      priority: 10
-      type: boolean
-    - description: Capture only the dropped packet.
-      jsonPath: .spec.droppedOnly
-      name: Dropped-Only
-      priority: 10
-      type: boolean
-    - description: Timeout in seconds.
-      jsonPath: .spec.timeout
-      name: Timeout
-      priority: 10
-      type: integer
-    - jsonPath: .metadata.creationTimestamp
-      name: Age
-      type: date
-    name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        properties:
-          spec:
-            properties:
-              destination:
-                properties:
-                  ip:
-                    oneOf:
-                    - format: ipv4
-                    - format: ipv6
-                    type: string
-                  namespace:
-                    type: string
-                  pod:
-                    type: string
-                  service:
-                    type: string
-                type: object
-              droppedOnly:
-                type: boolean
-              liveTraffic:
-                type: boolean
-              packet:
-                properties:
-                  ipHeader:
-                    properties:
-                      flags:
-                        type: integer
-                      protocol:
-                        type: integer
-                      srcIP:
-                        oneOf:
-                        - format: ipv4
-                        - format: ipv6
-                        type: string
-                      ttl:
-                        type: integer
-                    type: object
-                  ipv6Header:
-                    properties:
-                      hopLimit:
-                        type: integer
-                      nextHeader:
-                        type: integer
-                      srcIP:
-                        format: ipv6
-                        type: string
-                    type: object
-                  transportHeader:
-                    properties:
-                      icmp:
-                        properties:
-                          id:
-                            type: integer
-                          sequence:
-                            type: integer
-                        type: object
-                      tcp:
-                        properties:
-                          dstPort:
-                            type: integer
-                          flags:
-                            type: integer
-                          srcPort:
-                            type: integer
-                        type: object
-                      udp:
-                        properties:
-                          dstPort:
-                            type: integer
-                          srcPort:
-                            type: integer
-                        type: object
-                    type: object
-                type: object
-              source:
-                properties:
-                  ip:
-                    oneOf:
-                    - format: ipv4
-                    - format: ipv6
-                    type: string
-                  namespace:
-                    type: string
-                  pod:
-                    type: string
-                type: object
-              timeout:
-                type: integer
-            type: object
-          status:
-            properties:
-              capturedPacket:
-                properties:
-                  dstIP:
-                    type: string
-                  ipHeader:
-                    properties:
-                      flags:
-                        type: integer
-                      protocol:
-                        type: integer
-                      ttl:
-                        type: integer
-                    type: object
-                  ipv6Header:
-                    properties:
-                      hopLimit:
-                        type: integer
-                      nextHeader:
-                        type: integer
-                    type: object
-                  length:
-                    type: integer
-                  srcIP:
-                    type: string
-                  transportHeader:
-                    properties:
-                      icmp:
-                        properties:
-                          id:
-                            type: integer
-                          sequence:
-                            type: integer
-                        type: object
-                      tcp:
-                        properties:
-                          dstPort:
-                            type: integer
-                          flags:
-                            type: integer
-                          srcPort:
-                            type: integer
-                        type: object
-                      udp:
-                        properties:
-                          dstPort:
-                            type: integer
-                          srcPort:
-                            type: integer
-                        type: object
-                    type: object
-                type: object
-              dataplaneTag:
-                type: integer
-              phase:
-                type: string
-              reason:
-                type: string
-              results:
-                items:
-                  properties:
-                    node:
-                      type: string
-                    observations:
-                      items:
-                        properties:
-                          action:
-                            type: string
-                          component:
-                            type: string
-                          componentInfo:
-                            type: string
-                          dstMAC:
-                            type: string
-                          egress:
-                            type: string
-                          egressIP:
-                            type: string
-                          networkPolicy:
-                            type: string
-                          pod:
-                            type: string
-                          translatedDstIP:
-                            type: string
-                          translatedSrcIP:
-                            type: string
-                          ttl:
-                            type: integer
-                          tunnelDstIP:
-                            type: string
-                        type: object
-                      type: array
-                    role:
-                      type: string
-                    timestamp:
-                      type: integer
-                  type: object
-                type: array
-              startTime:
-                type: string
-            type: object
-        required:
-        - spec
-        type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - additionalPrinterColumns:
     - description: The phase of the Traceflow.
       jsonPath: .status.phase
@@ -5297,6 +3215,8 @@ spec:
                           egress:
                             type: string
                           egressIP:
+                            type: string
+                          egressNode:
                             type: string
                           networkPolicy:
                             type: string
@@ -5788,6 +3708,12 @@ rules:
   - get
   - list
 - apiGroups:
+  - controlplane.antrea.io
+  resources:
+  - networkpolicyevaluation
+  verbs:
+  - create
+- apiGroups:
   - stats.antrea.io
   resources:
   - networkpolicystats
@@ -6221,18 +4147,6 @@ rules:
   - list
   - update
 - apiGroups:
-  - apiregistration.k8s.io
-  resourceNames:
-  - v1beta1.networking.antrea.tanzu.vmware.com
-  - v1beta1.controlplane.antrea.tanzu.vmware.com
-  - v1alpha1.stats.antrea.tanzu.vmware.com
-  - v1beta1.system.antrea.tanzu.vmware.com
-  - v1beta2.controlplane.antrea.tanzu.vmware.com
-  resources:
-  - apiservices
-  verbs:
-  - delete
-- apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
@@ -6572,7 +4486,7 @@ spec:
               fieldPath: spec.serviceAccountName
         - name: ANTREA_CONFIG_MAP_NAME
           value: antrea-config
-        image: {{.AntreaImage}}
+        image: {{.AntreaControllerImage}}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
@@ -6601,6 +4515,7 @@ spec:
         resources:
           requests:
             cpu: 200m
+            memory: 100Mi
         volumeMounts:
         - mountPath: /etc/antrea/antrea-controller.conf
           name: antrea-config
@@ -6735,7 +4650,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: {{.AntreaImage}}
+        image: {{.AntreaAgentImage}}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
@@ -6796,7 +4711,7 @@ spec:
         - --log_file_max_num=4
         command:
         - start_ovs
-        image: {{.AntreaImage}}
+        image: {{.AntreaAgentImage}}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -6833,7 +4748,7 @@ spec:
         env:
         - name: SKIP_CNI_BINARIES
           value: ""
-        image: {{.AntreaImage}}
+        image: {{.AntreaAgentImage}}
         imagePullPolicy: IfNotPresent
         name: install-cni
         resources:
@@ -6923,7 +4838,7 @@ webhooks:
   - apiGroups:
     - crd.antrea.io
     apiVersions:
-    - v1alpha1
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
@@ -6945,7 +4860,7 @@ webhooks:
   - apiGroups:
     - crd.antrea.io
     apiVersions:
-    - v1alpha1
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
@@ -6976,7 +4891,6 @@ webhooks:
   - apiGroups:
     - crd.antrea.io
     apiVersions:
-    - v1alpha1
     - v1beta1
     operations:
     - CREATE
@@ -7153,7 +5067,7 @@ webhooks:
   - apiGroups:
     - crd.antrea.io
     apiVersions:
-    - v1alpha2
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
@@ -7175,7 +5089,7 @@ webhooks:
   - apiGroups:
     - crd.antrea.io
     apiVersions:
-    - v1alpha2
+    - v1beta1
     operations:
     - CREATE
     - UPDATE
@@ -7220,7 +5134,7 @@ webhooks:
   - apiGroups:
     - crd.antrea.io
     apiVersions:
-    - v1alpha1
+    - v1beta1
     operations:
     - CREATE
     - UPDATE

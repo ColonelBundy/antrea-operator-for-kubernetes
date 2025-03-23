@@ -4,9 +4,10 @@
 package types
 
 const (
-	AntreaClusterOperatorName = "antrea"
-	AntreaImageRenderKey      = "AntreaImage"
-	ReleaseVersion            = "ReleaseVersion"
+	AntreaClusterOperatorName      = "antrea"
+	AntreaAgentImageRenderKey      = "AntreaAgentImage"
+	AntreaControllerImageRenderKey = "AntreaControllerImage"
+	ReleaseVersion                 = "ReleaseVersion"
 
 	AntreaAgentConfigOption    = "antrea-agent.conf"
 	AntreaAgentConfigRenderKey = "AntreaAgentConfig"
