@@ -36,10 +36,15 @@ type AntreaInstallSpec struct {
 	// +required
 	AntreaPlatform string `json:"antreaPlatform"`
 
-	// AntreaImage is the Docker image name used by antrea-agent and antrea-controller.
+	// AntreaAgentImage is the Docker image name used by antrea-agent.
 	// +operator-sdk:csv:customresourcedefinitions:type=spec
 	// +optional
-	AntreaImage string `json:"antreaImage,omitempty"`
+	AntreaAgentImage string `json:"antreaAgentImage,omitempty"`
+
+	// AntreaControllerImage is the Docker image name used by antrea-controller.
+	// +operator-sdk:csv:customresourcedefinitions:type=spec
+	// +optional
+	AntreaControllerImage string `json:"antreaControllerImage,omitempty"`
 }
 
 // AntreaInstallStatus defines the observed state of AntreaInstall

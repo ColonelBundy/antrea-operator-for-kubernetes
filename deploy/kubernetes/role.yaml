@@ -28,6 +28,14 @@ rules:
 - apiGroups:
   - ''
   resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - update
+- apiGroups:
+  - ''
+  resources:
   - namespaces
   verbs:
   - create
@@ -79,6 +87,7 @@ rules:
   verbs:
   - create
   - get
+  - list
   - patch
   - update
   - watch
@@ -290,6 +299,13 @@ rules:
   verbs:
   - create
   - get
+  - patch
+- apiGroups:
+  - controlplane.antrea.io
+  resources:
+  - networkpolicyevaluation
+  verbs:
+  - create
   - patch
 - apiGroups:
   - controlplane.antrea.io

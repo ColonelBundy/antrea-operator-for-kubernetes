@@ -5,6 +5,5 @@ kind: Kustomization
 images:
 - name: antrea-operator
   newName: antrea/antrea-operator
-  newTag: v1.15.2-2ab02ab.dirty
 - name: antrea/antrea-operator
-  newTag: v1.15.2
+  newTag: v2.0.1

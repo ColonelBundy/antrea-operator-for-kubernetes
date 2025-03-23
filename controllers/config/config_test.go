@@ -85,7 +85,7 @@ func TestFillDefaultsOc(t *testing.T) {
 	g.Expect(err).ShouldNot(HaveOccurred())
 	g.Expect(antreaAgentConfig[operatortypes.ServiceCIDROption]).Should(Equal(clusterConfig.Spec.ServiceNetwork[0]))
 	g.Expect(int(antreaAgentConfig[operatortypes.DefaultMTUOption].(float64))).Should(Equal(operatortypes.DefaultMTU))
-	g.Expect(operConfig.Spec.AntreaImage).Should(Equal(operatortypes.DefaultAntreaImage))
+	g.Expect(operConfig.Spec.AntreaAgentImage).Should(Equal(operatortypes.DefaultAntreaAgentImage))
 }
 
 func TestFillDefaultsK8s(t *testing.T) {
@@ -99,7 +99,7 @@ func TestFillDefaultsK8s(t *testing.T) {
 	err = yaml.Unmarshal([]byte(operConfig.Spec.AntreaAgentConfig), &antreaAgentConfig)
 	g.Expect(err).ShouldNot(HaveOccurred())
 	g.Expect(int(antreaAgentConfig[operatortypes.DefaultMTUOption].(float64))).Should(Equal(operatortypes.DefaultMTU))
-	g.Expect(operConfig.Spec.AntreaImage).Should(Equal(operatortypes.DefaultAntreaImage))
+	g.Expect(operConfig.Spec.AntreaAgentImage).Should(Equal(operatortypes.DefaultAntreaAgentImage))
 }
 
 func TestValidateConfigOc(t *testing.T) {
@@ -144,7 +144,7 @@ func TestValidateConfigK8s(t *testing.T) {
 	operConfig = mockOperConfig.DeepCopy()
 	err = k8s.ValidateConfig(nil, operConfig)
 	g.Expect(err).Should(HaveOccurred())
-	g.Expect(err.Error()).Should(ContainSubstring("antreaImage option can not be empty"))
+	g.Expect(err.Error()).Should(ContainSubstring("antreaAgentImage option can not be empty"))
 
 	// Validate antrea-agent config
 	operConfig = mockOperConfig.DeepCopy()
@@ -178,12 +178,13 @@ func TestRenderOc(t *testing.T) {
 			antreaDeployment := &appsv1.Deployment{}
 			err = runtime.DefaultUnstructuredConverter.FromUnstructured(obj.UnstructuredContent(), antreaDeployment)
 			g.Expect(err).ShouldNot(HaveOccurred())
-			g.Expect(antreaDeployment.Spec.Template.Spec.Containers[0].Image).Should(Equal(operatortypes.DefaultAntreaImage))
+			g.Expect(antreaDeployment.Spec.Template.Spec.Containers[0].Image).Should(Equal(operatortypes.DefaultAntreaControllerImage))
 			g.Expect(antreaDeployment.Annotations["release.openshift.io/version"]).Should(Equal(version.GetVersion()))
 		} else if obj.GetKind() == "DaemonSet" && obj.GetNamespace() == "kube-system" && obj.GetName() == "antrea-agent" {
 			antreaDaemonSet := &appsv1.DaemonSet{}
 			err = runtime.DefaultUnstructuredConverter.FromUnstructured(obj.UnstructuredContent(), antreaDaemonSet)
 			g.Expect(err).ShouldNot(HaveOccurred())
+			g.Expect(antreaDaemonSet.Spec.Template.Spec.Containers[0].Image).Should(Equal(operatortypes.DefaultAntreaAgentImage))
 			g.Expect(antreaDaemonSet.Annotations["release.openshift.io/version"]).Should(Equal(version.GetVersion()))
 		}
 	}
@@ -211,12 +212,13 @@ func TestRenderK8s(t *testing.T) {
 			antreaDeployment := &appsv1.Deployment{}
 			err = runtime.DefaultUnstructuredConverter.FromUnstructured(obj.UnstructuredContent(), antreaDeployment)
 			g.Expect(err).ShouldNot(HaveOccurred())
-			g.Expect(antreaDeployment.Spec.Template.Spec.Containers[0].Image).Should(Equal(operatortypes.DefaultAntreaImage))
+			g.Expect(antreaDeployment.Spec.Template.Spec.Containers[0].Image).Should(Equal(operatortypes.DefaultAntreaControllerImage))
 			g.Expect(antreaDeployment.Annotations["release.openshift.io/version"]).Should(Equal(version.GetVersion()))
 		} else if obj.GetKind() == "DaemonSet" && obj.GetNamespace() == "kube-system" && obj.GetName() == "antrea-agent" {
 			antreaDaemonSet := &appsv1.DaemonSet{}
 			err = runtime.DefaultUnstructuredConverter.FromUnstructured(obj.UnstructuredContent(), antreaDaemonSet)
 			g.Expect(err).ShouldNot(HaveOccurred())
+			g.Expect(antreaDaemonSet.Spec.Template.Spec.Containers[0].Image).Should(Equal(operatortypes.DefaultAntreaAgentImage))
 			g.Expect(antreaDaemonSet.Annotations["release.openshift.io/version"]).Should(Equal(version.GetVersion()))
 		}
 	}
@@ -304,14 +306,15 @@ func TestGenerateRenderDataOc(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	operConfig := mockOperConfig.DeepCopy()
-	operConfig.Spec.AntreaImage = operatortypes.DefaultAntreaImage
+	operConfig.Spec.AntreaAgentImage = operatortypes.DefaultAntreaAgentImage
 	operatorNetwork := mockOperatorNetwork.DeepCopy()
 	renderData, err := oc.GenerateRenderData(operatorNetwork, operConfig)
 	g.Expect(err).ShouldNot(HaveOccurred())
 	g.Expect(renderData.Data[operatortypes.AntreaAgentConfigRenderKey]).Should(Equal(operConfig.Spec.AntreaAgentConfig))
 	g.Expect(renderData.Data[operatortypes.AntreaCNIConfigRenderKey]).Should(Equal(operConfig.Spec.AntreaCNIConfig))
 	g.Expect(renderData.Data[operatortypes.AntreaControllerConfigRenderKey]).Should(Equal(operConfig.Spec.AntreaControllerConfig))
-	g.Expect(renderData.Data[operatortypes.AntreaImageRenderKey]).Should(Equal(operConfig.Spec.AntreaImage))
+	g.Expect(renderData.Data[operatortypes.AntreaAgentImageRenderKey]).Should(Equal(operConfig.Spec.AntreaAgentImage))
+	g.Expect(renderData.Data[operatortypes.AntreaControllerImageRenderKey]).Should(Equal(operConfig.Spec.AntreaControllerImage))
 	g.Expect(renderData.Data[operatortypes.CNIConfDirRenderKey]).Should(Equal(network.MultusCNIConfDir))
 	g.Expect(renderData.Data[operatortypes.CNIBinDirRenderKey]).Should(Equal(network.CNIBinDir))
 
@@ -330,13 +333,14 @@ func TestGenerateRenderDataK8s(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	operConfig := mockOperConfig.DeepCopy()
-	operConfig.Spec.AntreaImage = operatortypes.DefaultAntreaImage
+	operConfig.Spec.AntreaAgentImage = operatortypes.DefaultAntreaAgentImage
 	renderData, err := k8s.GenerateRenderData(nil, operConfig)
 	g.Expect(err).ShouldNot(HaveOccurred())
 	g.Expect(renderData.Data[operatortypes.AntreaAgentConfigRenderKey]).Should(Equal(operConfig.Spec.AntreaAgentConfig))
 	g.Expect(renderData.Data[operatortypes.AntreaCNIConfigRenderKey]).Should(Equal(operConfig.Spec.AntreaCNIConfig))
 	g.Expect(renderData.Data[operatortypes.AntreaControllerConfigRenderKey]).Should(Equal(operConfig.Spec.AntreaControllerConfig))
-	g.Expect(renderData.Data[operatortypes.AntreaImageRenderKey]).Should(Equal(operConfig.Spec.AntreaImage))
+	g.Expect(renderData.Data[operatortypes.AntreaAgentImageRenderKey]).Should(Equal(operConfig.Spec.AntreaAgentImage))
+	g.Expect(renderData.Data[operatortypes.AntreaControllerImageRenderKey]).Should(Equal(operConfig.Spec.AntreaControllerImage))
 	g.Expect(renderData.Data[operatortypes.CNIConfDirRenderKey]).Should(Equal(gocni.DefaultNetDir))
 	g.Expect(renderData.Data[operatortypes.CNIBinDirRenderKey]).Should(Equal(gocni.DefaultCNIDir))
 }

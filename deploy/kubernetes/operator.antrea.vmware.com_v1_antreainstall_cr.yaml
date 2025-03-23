@@ -86,6 +86,15 @@ spec:
     # Enable Egress traffic shaping.
     #  EgressTrafficShaping: false
 
+    # Allow users to allocate Egress IPs from a different subnet from the default Node subnet.
+    #  EgressSeparateSubnet: false
+
+    # Allow users to apply ClusterNetworkPolicy to Kubernetes Nodes.
+    #  NodeNetworkPolicy: false
+
+    # Enable L7FlowExporter on Pods and Namespaces to export the application layer flows such as HTTP flows.
+    #  L7FlowExporter: false
+
     # Name of the OpenVSwitch bridge antrea-agent will create and use.
     # Make sure it doesn't conflict with your existing OpenVSwitch bridges.
     ovsBridge: "br-int"
@@ -394,6 +403,7 @@ spec:
       maxAge: 28
       # Compress enables gzip compression on rotated files.
       compress: true
+  antreaAgentImage: antrea/antrea-agent-ubuntu:v2.0.1
   antreaCNIConfig: |
     {
         "cniVersion":"0.3.0",
@@ -543,6 +553,6 @@ spec:
     multicluster:
       # Enable Multi-cluster NetworkPolicy.
       enableStretchedNetworkPolicy: false
-  antreaImage: antrea/antrea-ubuntu:v1.14.1
+  antreaControllerImage: antrea/antrea-controller-ubuntu:v2.0.1
   antreaPlatform: kubernetes
 

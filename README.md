@@ -92,7 +92,8 @@ Operator CR `antrea-install` is used to provide antrea configurations:
 - AntreaAgentConfig holds the configurations for antrea-agent.
 - AntreaCNIConfig holds the configurations of CNI.
 - AntreaControllerConfig holds the configurations for antrea-controller.
-- AntreaImage is the Antrea image name and version used by antrea-agent and antrea-controller.
+- AntreaAgentImage is the Antrea image name and version used by antrea-agent.
+- AntreaControllerImage is the Antrea image name and version used by antrea-controller.
 
 ## Contributing
 

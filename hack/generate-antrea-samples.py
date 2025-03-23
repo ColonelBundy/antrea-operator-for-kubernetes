@@ -28,9 +28,11 @@ else:
 
 platform = args.platform
 if platform == "kubernetes":
-    image = "antrea-ubuntu"
+    agentImage = "antrea-agent-ubuntu"
+    controllerImage = "antrea-controller-ubuntu"
 else:
-    image = "antrea-ubi"
+    agentImage = "antrea-agent-ubi"
+    controllerImage = "antrea-controller-ubi"
 
 out = {
     'apiVersion': 'operator.antrea.vmware.com/v1',
@@ -40,7 +42,8 @@ out = {
         'namespace': 'antrea-operator'
     },
     'spec': {
-        'antreaImage': 'antrea/%s:%s' % (image, version),
+        'antreaAgentImage': 'antrea/%s:%s' % (agentImage, version),
+        'antreaControllerImage': 'antrea/%s:%s' % (controllerImage, version),
         'antreaPlatform': platform
     }
 }
