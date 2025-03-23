@@ -1506,6 +1506,33 @@ spec:
                             type: string
                           type: object
                       type: object
+                    nodeSelector:
+                      properties:
+                        matchExpressions:
+                          items:
+                            properties:
+                              key:
+                                type: string
+                              operator:
+                                enum:
+                                - In
+                                - NotIn
+                                - Exists
+                                - DoesNotExist
+                                type: string
+                              values:
+                                items:
+                                  pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                        matchLabels:
+                          additionalProperties:
+                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                            type: string
+                          type: object
+                      type: object
                     podSelector:
                       properties:
                         matchExpressions:
@@ -2739,6 +2766,25 @@ spec:
                       pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
                       type: string
                     type: object
+                type: object
+              subnetInfo:
+                properties:
+                  gateway:
+                    oneOf:
+                    - format: ipv4
+                    - format: ipv6
+                    type: string
+                  prefixLength:
+                    maximum: 127
+                    minimum: 1
+                    type: integer
+                  vlan:
+                    maximum: 4094
+                    minimum: 0
+                    type: integer
+                required:
+                - gateway
+                - prefixLength
                 type: object
             required:
             - ipRanges
@@ -5109,7 +5155,7 @@ spec:
                             minimum: 1
                             type: integer
                           flags:
-                            maximum: 7
+                            maximum: 255
                             minimum: 0
                             type: integer
                           srcPort:
@@ -5205,7 +5251,7 @@ spec:
                             minimum: 1
                             type: integer
                           flags:
-                            maximum: 7
+                            maximum: 255
                             minimum: 0
                             type: integer
                           srcPort:
@@ -5253,6 +5299,8 @@ spec:
                           egressIP:
                             type: string
                           networkPolicy:
+                            type: string
+                          networkPolicyRule:
                             type: string
                           pod:
                             type: string
@@ -6039,6 +6087,14 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -6141,6 +6197,7 @@ rules:
 - apiGroups:
   - ""
   resourceNames:
+  - antrea-controller-tls
   - antrea-ipsec-ca
   resources:
   - secrets
@@ -6148,6 +6205,7 @@ rules:
   - get
   - update
   - watch
+  - list
 - apiGroups:
   - ""
   resources:
@@ -6480,7 +6538,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: aa947bf5c403412b9c8cfcbcc335659992f19bd428886e80f43bafa052bac1e6
+        checksum/config: ac3c14eed7ca0dc28bf2d659cd2c4e4a39d55278fb9a8759c30ea12eff89e518
       labels:
         app: antrea
         component: antrea-controller
@@ -6648,7 +6706,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: aa947bf5c403412b9c8cfcbcc335659992f19bd428886e80f43bafa052bac1e6
+        checksum/config: ac3c14eed7ca0dc28bf2d659cd2c4e4a39d55278fb9a8759c30ea12eff89e518
         kubectl.kubernetes.io/default-container: antrea-agent
       labels:
         app: antrea
@@ -7073,7 +7131,9 @@ webhooks:
     - crd.antrea.io
     apiVersions:
     - v1alpha2
+    - v1beta1
     operations:
+    - CREATE
     - UPDATE
     resources:
     - externalippools

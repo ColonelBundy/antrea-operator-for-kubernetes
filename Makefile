@@ -11,7 +11,7 @@ endif
 BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true"
+CRD_OPTIONS ?= "crd"
 
 # Default to Openshift for the platform, which means for example that the Antrea
 # image will default to antrea-ubi in generate manifests. To use the operator
@@ -50,7 +50,7 @@ PKG_IS_DEFAULT_CHANNEL := --default-channel
 endif
 PKG_MAN_OPTS ?= $(FROM_VERSION) $(PKG_CHANNELS) $(PKG_IS_DEFAULT_CHANNEL)
 
-GOLANGCI_LINT_VERSION := v1.51.0
+GOLANGCI_LINT_VERSION := v1.60.3
 GOLANGCI_LINT_BINDIR  := $(CURDIR)/.golangci-bin
 GOLANGCI_LINT_BIN     := $(GOLANGCI_LINT_BINDIR)/$(GOLANGCI_LINT_VERSION)/golangci-lint
 
@@ -79,11 +79,11 @@ test: generate golangci manifests
 # Build manager binary
 manager:
 	@echo "===> Building antrea-operator binary <==="
-	go build -o bin/manager -ldflags '$(LDFLAGS)' main.go
+	GOOS=linux go build -o bin/manager -ldflags '$(LDFLAGS)' main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate golangci manifests
-	go run -ldflags '$(LDFLAGS)' ./main.go
+	GOOS=linux go run -ldflags '$(LDFLAGS)' ./main.go
 
 # Install CRDs into a cluster
 install: manifests kustomize
@@ -109,10 +109,10 @@ generate: controller-gen
 
 # Build the docker image
 docker-build:
-	docker build -f build/Dockerfile --label version="$(VERSION)" . -t ${IMG}
+	docker build -f build/Dockerfile --platform linux/amd64 --label version="$(VERSION)" . -t ${IMG}
 	docker tag ${IMG} antrea/antrea-operator
 
-CONTROLLER_GEN_VERSION := v0.6.2
+CONTROLLER_GEN_VERSION := v0.17.2
 CONTROLLER_GEN_BINDIR  := $(CURDIR)/.controller-gen
 CONTROLLER_GEN         := $(CONTROLLER_GEN_BINDIR)/$(CONTROLLER_GEN_VERSION)/controller-gen
 
@@ -124,7 +124,7 @@ $(CONTROLLER_GEN):
 .PHONY: controller-gen
 controller-gen: $(CONTROLLER_GEN)
 
-KUSTOMIZE_VERSION := 5.3.0
+KUSTOMIZE_VERSION := 5.6.0
 KUSTOMIZE_BINDIR  := $(CURDIR)/.kustomize
 KUSTOMIZE         := $(KUSTOMIZE_BINDIR)/$(KUSTOMIZE_VERSION)/kustomize
 

@@ -24,7 +24,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -64,7 +63,7 @@ func (k8s *AdaptorK8s) SetupWithManager(r *AntreaInstallReconciler, mgr ctrl.Man
 func (oc *AdaptorOc) SetupWithManager(r *AntreaInstallReconciler, mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&operatorv1.AntreaInstall{}).
-		Watches(&source.Kind{Type: &configv1.Network{}}, &handler.EnqueueRequestForObject{}).
+		Watches(&configv1.Network{}, &handler.EnqueueRequestForObject{}).
 		Complete(r)
 }
 
@@ -421,6 +420,21 @@ func deleteExistingPods(c client.Client, component string) error {
 func updateNetworkStatus(c cnoclient.Client, clusterConfig *configv1.Network, defaultMTU int) error {
 	status := configutil.BuildNetworkStatus(clusterConfig, defaultMTU)
 	clusterConfig.Status = *status
+
+	// Ensure networkDiagnostics has valid empty values to avoid validation errors, Openshift 4.15+
+	if clusterConfig.Spec.NetworkDiagnostics.SourcePlacement.NodeSelector == nil {
+		clusterConfig.Spec.NetworkDiagnostics.SourcePlacement.NodeSelector = make(map[string]string)
+	}
+	if clusterConfig.Spec.NetworkDiagnostics.SourcePlacement.Tolerations == nil {
+		clusterConfig.Spec.NetworkDiagnostics.SourcePlacement.Tolerations = []corev1.Toleration{}
+	}
+	if clusterConfig.Spec.NetworkDiagnostics.TargetPlacement.NodeSelector == nil {
+		clusterConfig.Spec.NetworkDiagnostics.TargetPlacement.NodeSelector = make(map[string]string)
+	}
+	if clusterConfig.Spec.NetworkDiagnostics.TargetPlacement.Tolerations == nil {
+		clusterConfig.Spec.NetworkDiagnostics.TargetPlacement.Tolerations = []corev1.Toleration{}
+	}
+
 	if err := apply.ApplyObject(context.TODO(), c, clusterConfig, ""); err != nil {
 		log.Error(err, fmt.Sprintf("Could not apply (%s) %s/%s", clusterConfig.GroupVersionKind(),
 			clusterConfig.GetNamespace(), clusterConfig.GetName()))

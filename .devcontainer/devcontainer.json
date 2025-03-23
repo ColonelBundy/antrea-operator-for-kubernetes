@@ -1,0 +1,29 @@
+{
+    "name": "Go DevContainer",
+    "dockerFile": "Dockerfile",
+    "runArgs": [
+      "--init"
+    ],
+    "build": {
+      "cacheFrom": "type=local,src=/tmp/docker-cache"
+    },
+    "workspaceFolder": "/workspace",
+    "mounts": [
+      "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    ],
+    "remoteEnv": {},
+    "remoteUser": "vscode",
+    "postCreateCommand": "go mod tidy",
+    "features": {
+      "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "customizations": {
+      "vscode": {
+        "settings": {},
+        "extensions": [
+          "golang.go",
+          "ms-kubernetes-tools.vscode-kubernetes-tools"
+        ]
+      }
+    }
+  }
