@@ -310,6 +310,133 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  name: bgppolicies.crd.antrea.io
+spec:
+  group: crd.antrea.io
+  names:
+    kind: BGPPolicy
+    plural: bgppolicies
+    singular: bgppolicy
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - description: Local BGP AS number
+      jsonPath: .spec.localASN
+      name: Local ASN
+      type: integer
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              advertisements:
+                properties:
+                  egress:
+                    properties: {}
+                    type: object
+                  pod:
+                    properties: {}
+                    type: object
+                  service:
+                    properties:
+                      ipTypes:
+                        items:
+                          enum:
+                          - ClusterIP
+                          - LoadBalancerIP
+                          - ExternalIP
+                          type: string
+                        type: array
+                    type: object
+                type: object
+              bgpPeers:
+                items:
+                  properties:
+                    address:
+                      oneOf:
+                      - format: ipv4
+                      - format: ipv6
+                      type: string
+                    asn:
+                      format: int32
+                      maximum: 65535
+                      minimum: 1
+                      type: integer
+                    gracefulRestartTimeSeconds:
+                      default: 120
+                      format: int32
+                      maximum: 3600
+                      minimum: 1
+                      type: integer
+                    multihopTTL:
+                      default: 1
+                      format: int32
+                      maximum: 255
+                      minimum: 1
+                      type: integer
+                    port:
+                      default: 179
+                      format: int32
+                      maximum: 65535
+                      minimum: 1
+                      type: integer
+                  required:
+                  - address
+                  - asn
+                  type: object
+                type: array
+              listenPort:
+                default: 179
+                format: int32
+                maximum: 65535
+                minimum: 1
+                type: integer
+              localASN:
+                format: int32
+                maximum: 65535
+                minimum: 64512
+                type: integer
+              nodeSelector:
+                properties:
+                  matchExpressions:
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        operator:
+                          enum:
+                          - In
+                          - NotIn
+                          - Exists
+                          - DoesNotExist
+                          type: string
+                        values:
+                          items:
+                            pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                            type: string
+                          type: array
+                      type: object
+                    type: array
+                  matchLabels:
+                    x-kubernetes-preserve-unknown-fields: true
+                type: object
+            required:
+            - nodeSelector
+            - localASN
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
   labels:
     app: antrea
   name: clustergroups.crd.antrea.io
@@ -2757,6 +2884,55 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  name: nodelatencymonitors.crd.antrea.io
+spec:
+  group: crd.antrea.io
+  names:
+    kind: NodeLatencyMonitor
+    plural: nodelatencymonitors
+    shortNames:
+    - nlm
+    singular: nodelatencymonitor
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - description: Specifies the interval between pings.
+      jsonPath: .spec.pingIntervalSeconds
+      name: PingIntervalSeconds
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          metadata:
+            properties:
+              name:
+                pattern: ^default$
+                type: string
+            type: object
+          spec:
+            properties:
+              pingIntervalSeconds:
+                default: 60
+                description: Ping interval in seconds, must be at least 1.
+                format: int32
+                minimum: 1
+                type: integer
+            required:
+            - pingIntervalSeconds
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
   name: supportbundlecollections.crd.antrea.io
 spec:
   group: crd.antrea.io
@@ -3223,6 +3399,8 @@ spec:
                           networkPolicyRule:
                             type: string
                           pod:
+                            type: string
+                          srcPodIP:
                             type: string
                           translatedDstIP:
                             type: string
@@ -3806,6 +3984,12 @@ metadata:
   name: antrea-agent
 rules:
 - apiGroups:
+  - stats.antrea.io
+  resources:
+  - nodelatencystats
+  verbs:
+  - create
+- apiGroups:
   - ""
   resources:
   - nodes
@@ -3965,9 +4149,11 @@ rules:
 - apiGroups:
   - crd.antrea.io
   resources:
+  - bgppolicies
   - externalippools
   - ippools
   - trafficcontrols
+  - nodelatencymonitors
   verbs:
   - get
   - watch
@@ -4021,6 +4207,16 @@ rules:
   - create
   - patch
   - update
+- apiGroups:
+  - ""
+  resourceNames:
+  - antrea-bgp-passwords
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -4452,7 +4648,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ac3c14eed7ca0dc28bf2d659cd2c4e4a39d55278fb9a8759c30ea12eff89e518
+        checksum/config: 20130c4a5dbfeec75182bc3053288f64c06d0350b34c86675ac88d5961c47853
       labels:
         app: antrea
         component: antrea-controller
@@ -4621,7 +4817,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ac3c14eed7ca0dc28bf2d659cd2c4e4a39d55278fb9a8759c30ea12eff89e518
+        checksum/config: 20130c4a5dbfeec75182bc3053288f64c06d0350b34c86675ac88d5961c47853
         kubectl.kubernetes.io/default-container: antrea-agent
       labels:
         app: antrea

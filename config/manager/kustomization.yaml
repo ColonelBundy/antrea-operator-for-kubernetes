@@ -6,4 +6,4 @@ images:
 - name: antrea-operator
   newName: antrea/antrea-operator
 - name: antrea/antrea-operator
-  newTag: v2.0.1
+  newTag: v2.1.0

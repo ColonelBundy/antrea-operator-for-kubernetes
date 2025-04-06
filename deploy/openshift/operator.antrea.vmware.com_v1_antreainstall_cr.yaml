@@ -25,7 +25,7 @@ spec:
 
     # Enable support for cleaning up stale UDP Service conntrack connections in AntreaProxy. This requires AntreaProxy to
     # be enabled, otherwise this flag will not take effect.
-    #  CleanupStaleUDPSvcConntrack: false
+    #  CleanupStaleUDPSvcConntrack: true
 
     # Enable traceflow which provides packet tracing feature to diagnose network issue.
     #  Traceflow: true
@@ -94,6 +94,13 @@ spec:
 
     # Enable L7FlowExporter on Pods and Namespaces to export the application layer flows such as HTTP flows.
     #  L7FlowExporter: false
+
+    # Enable NodeLatencyMonitor to monitor the latency between Nodes.
+    #  NodeLatencyMonitor: false
+
+    # Allow users to initiate BGP process on selected Kubernetes Nodes and advertise Service IPs, Pod IPs and Egress IPs to
+    # remote BGP peers.
+    #  BGPPolicy: false
 
     # Name of the OpenVSwitch bridge antrea-agent will create and use.
     # Make sure it doesn't conflict with your existing OpenVSwitch bridges.
@@ -326,7 +333,7 @@ spec:
     antreaProxy:
       # To disable AntreaProxy, set this to false.
       enable: true
-      # ProxyAll tells antrea-agent to proxy all Service traffic, including NodePort, LoadBalancer, and ClusterIP traffic,
+      # proxyAll tells antrea-agent to proxy all Service traffic, including NodePort, LoadBalancer, and ClusterIP traffic,
       # regardless of where they come from. Therefore, running kube-proxy is no longer required.
       # Note that this option is experimental. If kube-proxy is removed, option kubeAPIServerOverride must be used to access
       # apiserver directly.
@@ -343,7 +350,7 @@ spec:
       # External IPs of LoadBalancer Services. This is useful when the external LoadBalancer provides additional
       # capabilities (e.g. TLS termination) and it is desirable for Pod-to-ExternalIP traffic to be sent to the
       # external LoadBalancer instead of being load-balanced to an Endpoint directly by AntreaProxy.
-      # Note that setting ProxyLoadBalancerIPs to false usually only makes sense when ProxyAll is set to true and
+      # Note that setting ProxyLoadBalancerIPs to false usually only makes sense when proxyAll is set to true and
       # kube-proxy is removed from the cluster, otherwise kube-proxy will still load-balance this traffic.
       proxyLoadBalancerIPs: true
       # The value of the "service.kubernetes.io/service-proxy-name" label for AntreaProxy to match. If it is set,
@@ -403,7 +410,7 @@ spec:
       maxAge: 28
       # Compress enables gzip compression on rotated files.
       compress: true
-  antreaAgentImage: antrea/antrea-agent-ubi:v2.0.1
+  antreaAgentImage: antrea/antrea-agent-ubi:v2.1.0
   antreaCNIConfig: |
     {
         "cniVersion":"0.3.0",
@@ -553,6 +560,6 @@ spec:
     multicluster:
       # Enable Multi-cluster NetworkPolicy.
       enableStretchedNetworkPolicy: false
-  antreaControllerImage: antrea/antrea-controller-ubi:v2.0.1
+  antreaControllerImage: antrea/antrea-controller-ubi:v2.1.0
   antreaPlatform: openshift
 

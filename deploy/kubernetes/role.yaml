@@ -355,6 +355,15 @@ rules:
 - apiGroups:
   - crd.antrea.io
   resources:
+  - bgppolicies
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+- apiGroups:
+  - crd.antrea.io
+  resources:
   - clustergroups
   verbs:
   - create
@@ -497,6 +506,15 @@ rules:
   - networkpolicies/status
   verbs:
   - update
+  - patch
+- apiGroups:
+  - crd.antrea.io
+  resources:
+  - nodelatencymonitors
+  verbs:
+  - get
+  - list
+  - watch
   - patch
 - apiGroups:
   - crd.antrea.io
@@ -722,6 +740,13 @@ rules:
   verbs:
   - get
   - list
+  - patch
+- apiGroups:
+  - stats.antrea.io
+  resources:
+  - nodelatencystats
+  verbs:
+  - create
   - patch
 - apiGroups:
   - system.antrea.io
